@@ -1,4 +1,4 @@
-namespace PKISharp.SimplePKI
+﻿namespace PKISharp.SimplePKI
 {
     public enum PkiEncodingFormat
     {

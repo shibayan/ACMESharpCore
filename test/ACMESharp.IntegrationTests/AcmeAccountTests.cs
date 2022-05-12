@@ -1,14 +1,17 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+
 using ACMESharp.Protocol;
 using ACMESharp.Protocol.Resources;
 using ACMESharp.Testing.Xunit;
+
 using Newtonsoft.Json;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,7 +26,7 @@ namespace ACMESharp.IntegrationTests
             : base(output, state, clients)
         {
             _usePostAsGet = true;
-        }        
+        }
     }
 
     [Collection(nameof(AcmeAccountTests))]
@@ -192,7 +195,7 @@ namespace ACMESharp.IntegrationTests
 
             var ex = await Assert.ThrowsAnyAsync<AcmeProtocolException>(
                 () => Clients.Acme.UpdateAccountAsync(_contactsUpdate));
-            
+
             Assert.Equal(ProblemType.Unauthorized, ex.ProblemType);
             Assert.Contains("deactivated", ex.ProblemDetail,
                     StringComparison.OrdinalIgnoreCase);

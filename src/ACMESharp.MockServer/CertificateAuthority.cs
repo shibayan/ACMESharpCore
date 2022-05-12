@@ -1,7 +1,9 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+
 using ACMESharp.MockServer.Storage;
+
 using PKISharp.SimplePKI;
 
 namespace ACMESharp.MockServer
@@ -11,7 +13,7 @@ namespace ACMESharp.MockServer
         private Options _opts;
         private PkiKeyPair _keyPair;
 
-      //private long _serNum;
+        //private long _serNum;
 
         public CertificateAuthority(Options opts)
         {
@@ -78,24 +80,41 @@ namespace ACMESharp.MockServer
                 DateTimeOffset? notAfter = null)
         {
             if (notBefore == null)
+            {
                 notBefore = _opts.MinBefore;
+            }
+
             if (notAfter == null)
+            {
                 notAfter = _opts.MinAfter;
+            }
 
             if (notBefore.Value > _opts.MaxBefore)
+            {
                 notBefore = _opts.MaxBefore;
+            }
+
             if (notBefore.Value < _opts.MinBefore)
+            {
                 notBefore = _opts.MinBefore;
+            }
 
             if (notAfter.Value > _opts.MaxAfter)
+            {
                 notAfter = _opts.MaxAfter;
+            }
+
             if (notAfter.Value < _opts.MinAfter)
+            {
                 notAfter = _opts.MinAfter;
+            }
 
             var serNum = DateTime.Now.Ticks;
             var serNumBytes = BitConverter.GetBytes(serNum);
             if (BitConverter.IsLittleEndian)
+            {
                 serNumBytes = serNumBytes.Reverse().ToArray();
+            }
 
             return csr.Create(CaCertificate, _keyPair.PrivateKey, notBefore.Value, notAfter.Value, serNumBytes);
         }

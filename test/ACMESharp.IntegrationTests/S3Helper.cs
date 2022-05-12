@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+
 using Microsoft.Extensions.Logging;
 
 namespace ACMESharp.IntegrationTests
@@ -25,7 +27,7 @@ namespace ACMESharp.IntegrationTests
                 S3CannedAcl = S3CannedACL.FindValue(value);
             }
         }
-        
+
         public S3CannedACL S3CannedAcl
         { get; set; }
 
@@ -53,8 +55,8 @@ namespace ACMESharp.IntegrationTests
                         Key = filePath,
                     };
                     var s3Resp = await s3.DeleteObjectAsync(s3Requ);
-				}
-				else
+                }
+                else
                 {
                     using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(content)))
                     {
@@ -69,8 +71,8 @@ namespace ACMESharp.IntegrationTests
 
                         var s3Resp = await s3.PutObjectAsync(s3Requ);
                     }
-				}
-			}
+                }
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-using ACMESharp.Protocol.Resources;
+﻿using ACMESharp.Protocol.Resources;
 
 namespace ACMESharp.MockServer.Storage
 {
@@ -10,7 +10,7 @@ namespace ACMESharp.MockServer.Storage
 
         public string CertKey { get; set; }
 
-        public RevokeReason? RevokedReason {get; set; }
+        public RevokeReason? RevokedReason { get; set; }
 
         public string Pem { get; set; }
 

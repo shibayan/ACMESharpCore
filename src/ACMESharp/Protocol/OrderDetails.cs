@@ -1,20 +1,19 @@
-using ACMESharp.Protocol.Resources;
+﻿using ACMESharp.Protocol.Resources;
 
-namespace ACMESharp.Protocol
+namespace ACMESharp.Protocol;
+
+/// <summary>
+/// An aggregation of Order details including resource payload and ancillary,
+/// associated data.
+/// </summary>
+/// <remarks>
+/// This represents a superset of details that are included in responses
+/// to several ACME operations regarding an ACME Order, such as 
+/// Order creation and finalization.
+/// </remarks>
+public class OrderDetails
 {
-    /// <summary>
-    /// An aggregation of Order details including resource payload and ancillary,
-    /// associated data.
-    /// </summary>
-    /// <remarks>
-    /// This represents a superset of details that are included in responses
-    /// to several ACME operations regarding an ACME Order, such as 
-    /// Order creation and finalization.
-    /// </remarks>
-    public class OrderDetails
-    {
-        public Order Payload { get; set; }
+    public Order Payload { get; set; }
 
-        public string OrderUrl { get; set; }
-    }
+    public string OrderUrl { get; set; }
 }

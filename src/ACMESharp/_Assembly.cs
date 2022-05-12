@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 // Expose private members to "friend" testing assemblies
 [assembly: InternalsVisibleTo("ACMESharp.UnitTests")]

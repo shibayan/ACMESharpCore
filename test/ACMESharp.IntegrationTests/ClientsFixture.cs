@@ -1,6 +1,8 @@
-using System;
+﻿using System;
 using System.Net.Http;
+
 using ACMESharp.Protocol;
+
 using DnsClient;
 
 namespace ACMESharp.IntegrationTests

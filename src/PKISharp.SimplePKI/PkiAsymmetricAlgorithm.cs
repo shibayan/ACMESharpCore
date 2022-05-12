@@ -1,4 +1,4 @@
-namespace PKISharp.SimplePKI
+﻿namespace PKISharp.SimplePKI
 {
     public enum PkiAsymmetricAlgorithm
     {
@@ -9,7 +9,7 @@ namespace PKISharp.SimplePKI
         /// and is widely used for secure data transmission.
         /// </summary>
         Rsa = 1,
-        
+
         /// <summary>
         /// The Elliptic Curve Digital Signature Algorithm (ECDSA) offers a variant
         /// of the Digital Signature Algorithm (DSA) which uses elliptic curve

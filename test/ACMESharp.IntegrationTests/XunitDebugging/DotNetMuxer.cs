@@ -1,4 +1,4 @@
-// Imported from https://github.com/aspnet/Common/blob/a7b9be2e5020a364765efe2a33f50fa237979980/shared/Microsoft.Extensions.CommandLineUtils.Sources/Utilities/DotNetMuxer.cs
+﻿// Imported from https://github.com/aspnet/Common/blob/a7b9be2e5020a364765efe2a33f50fa237979980/shared/Microsoft.Extensions.CommandLineUtils.Sources/Utilities/DotNetMuxer.cs
 
 using System;
 using System.Diagnostics;

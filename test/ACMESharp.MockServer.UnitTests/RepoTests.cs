@@ -1,17 +1,20 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+using ACMESharp.MockServer.Storage;
+using ACMESharp.Protocol;
+using ACMESharp.Protocol.Resources;
+
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Net;
-using ACMESharp.Protocol;
-using System;
-using ACMESharp.Protocol.Resources;
-using ACMESharp.MockServer.Storage;
-using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace ACMESharp.MockServer.UnitTests
 {
@@ -28,7 +31,9 @@ namespace ACMESharp.MockServer.UnitTests
         public static void Init(TestContext ctx)
         {
             if (File.Exists(LiteDbFilePath))
+            {
                 File.Delete(LiteDbFilePath);
+            }
 
             _repo = Storage.Impl.LiteDbRepo.GetInstance(LiteDbFilePath);
         }

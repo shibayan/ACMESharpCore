@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+
 using ACMESharp.MockServer.Storage;
 
 namespace ACMESharp.MockServer
@@ -31,8 +32,10 @@ namespace ACMESharp.MockServer
         {
             var dbNonce = _repo.GetNonceByValue(nonce);
             if (dbNonce == null)
+            {
                 return false;
-            
+            }
+
             _repo.RemoveNonce(dbNonce);
             return true;
         }

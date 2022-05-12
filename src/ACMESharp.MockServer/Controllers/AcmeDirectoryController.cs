@@ -1,5 +1,7 @@
-using System;
+﻿using System;
+
 using ACMESharp.Protocol.Resources;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ACMESharp.MockServer.Controllers
@@ -44,7 +46,7 @@ namespace ACMESharp.MockServer.Controllers
             };
 
             var random = Guid.NewGuid().ToString().Replace("-", "");
-          //dir.SetExtra($"prop_{random}", random);
+            //dir.SetExtra($"prop_{random}", random);
             dir.SetExtra($"prop_{random}",
                     "https://community.letsencrypt.org/t/adding-random-entries-to-the-directory/");
 

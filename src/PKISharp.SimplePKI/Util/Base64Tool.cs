@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 
 namespace PKISharp.SimplePKI.Util
@@ -21,7 +21,10 @@ namespace PKISharp.SimplePKI.Util
         public string UrlEncode(string raw, Encoding encoding = null)
         {
             if (encoding == null)
+            {
                 encoding = Encoding.UTF8;
+            }
+
             return UrlEncode(encoding.GetBytes(raw));
         }
 
@@ -59,7 +62,11 @@ namespace PKISharp.SimplePKI.Util
         public string UrlDecodeToString(string enc, Encoding encoding = null)
         {
             if (encoding == null)
+            {
                 encoding = Encoding.UTF8;
+            }
+
             return encoding.GetString(UrlDecode(enc));
         }
-    }}
+    }
+}

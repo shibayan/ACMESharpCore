@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+
 using Xunit;
 
 namespace ACMESharp.IntegrationTests.Debugging
@@ -53,19 +54,29 @@ namespace ACMESharp.IntegrationTests.Debugging
                     ParsedArgs = ArgParser.Parse(args);
 
                     if (ParsedArgs.TryGetAndRemoveParameterWithoutValue("-x86"))
+                    {
                         Force32bit = true;
+                    }
 
                     if (ParsedArgs.TryGetParameterWithoutValue("-internaldiagnostics"))
+                    {
                         InternalDiagnostics = true;
+                    }
 
                     if (ParsedArgs.TryGetParameterWithoutValue("-quiet"))
+                    {
                         Quiet = true;
+                    }
 
                     if (ParsedArgs.TryGetParameterWithoutValue("-nocolor"))
+                    {
                         NoColor = true;
+                    }
 
                     if (ParsedArgs.TryGetAndRemoveParameterWithoutValue("-usemsbuild"))
+                    {
                         UseMsBuild = true;
+                    }
 
                     MsBuildVerbosity = ParsedArgs.GetAndRemoveParameterWithValue("-msbuildverbosity");
 
@@ -86,8 +97,12 @@ namespace ACMESharp.IntegrationTests.Debugging
                     // in the context of the bin folder, not the project folder
                     var currentDirectory = Directory.GetCurrentDirectory();
                     foreach (var key in OutputFileArgs)
+                    {
                         if (ParsedArgs.TryGetSingleValue(key, out var fileName))
+                        {
                             ParsedArgs[key][0] = Path.GetFullPath(Path.Combine(currentDirectory, fileName));
+                        }
+                    }
                 }
                 catch (ArgumentException ex)
                 {
@@ -141,7 +156,9 @@ namespace ACMESharp.IntegrationTests.Debugging
                 {
                     var result = RunTargetFramework(testProject, targetFramework, amendOutputFileNames: targetFrameworks.Length > 1);
                     if (result < 0)
+                    {
                         return result;
+                    }
 
                     returnValue = Math.Max(result, returnValue);
                 }
@@ -160,9 +177,13 @@ namespace ACMESharp.IntegrationTests.Debugging
             var args = $"\"{testProject}\" /nologo /verbosity:{MsBuildVerbosity ?? DefaultMsBuildVerbosity} {BuildStdProps} ";
 
             if (UseMsBuild)
+            {
                 return new ProcessStartInfo { FileName = MsBuild.MsBuildName, Arguments = args };
+            }
             else
+            {
                 return new ProcessStartInfo { FileName = DotNetMuxer.MuxerPath, Arguments = $"msbuild {args}" };
+            }
         }
 
         string[] GetTargetFrameworks(string testProject)
@@ -182,7 +203,9 @@ namespace ACMESharp.IntegrationTests.Debugging
 
                 process.WaitForExit();
                 if (process.ExitCode != 0)
+                {
                     return null;
+                }
 
                 return File.ReadAllLines(tmpFile);
             }
@@ -280,12 +303,19 @@ namespace ACMESharp.IntegrationTests.Debugging
             {
                 var amendedParsedArgs = ParsedArgs.ToDictionary(kvp => kvp.Key, kvp => new List<string>(kvp.Value));
                 foreach (var key in OutputFileArgs)
+                {
                     if (amendedParsedArgs.TryGetSingleValue(key, out var filePath))
+                    {
                         amendedParsedArgs[key][0] = Path.Combine(Path.GetDirectoryName(filePath), $"{Path.GetFileNameWithoutExtension(filePath)}-{targetFramework}{Path.GetExtension(filePath)}");
+                    }
+                }
+
                 extraArgs = ToArgumentsString(amendedParsedArgs);
             }
             else
+            {
                 extraArgs = ToArgumentsString(ParsedArgs);
+            }
 
             var tmpFile = Path.GetTempFileName();
             try
@@ -326,39 +356,61 @@ namespace ACMESharp.IntegrationTests.Debugging
                 foreach (var line in lines)
                 {
                     var idx = line.IndexOf(':');
-                    if (idx <= 0) continue;
+                    if (idx <= 0)
+                    {
+                        continue;
+                    }
+
                     var name = line.Substring(0, idx)?.Trim().ToLowerInvariant();
                     var value = line.Substring(idx + 1)?.Trim();
                     if (name == "outputpath")
+                    {
                         outputPath = value;
+                    }
                     else if (name == "assemblyname")
+                    {
                         assemblyName = value;
+                    }
                     else if (name == "targetfilename")
+                    {
                         targetFileName = value;
+                    }
                     else if (name == "targetframeworkidentifier")
+                    {
                         targetFrameworkIdentifier = value;
+                    }
                     else if (name == "targetframeworkversion")
+                    {
                         targetFrameworkVersion = value;
+                    }
                     else if (name == "runtimeframeworkversion")
+                    {
                         runtimeFrameworkVersion = value;
+                    }
                 }
 
                 var version = string.IsNullOrWhiteSpace(targetFrameworkVersion) ? new Version("0.0.0.0") : new Version(targetFrameworkVersion.TrimStart('v'));
 
                 if (targetFrameworkIdentifier == ".NETCoreApp")
                 {
-Console.Error.WriteLine("RTFWVers={0}", runtimeFrameworkVersion);
+                    Console.Error.WriteLine("RTFWVers={0}", runtimeFrameworkVersion);
                     var tempRuntimeFrameworkVersion = runtimeFrameworkVersion;
                     var dash = tempRuntimeFrameworkVersion.IndexOf("-");
                     if (dash > 0)
+                    {
                         tempRuntimeFrameworkVersion = tempRuntimeFrameworkVersion.Substring(0, dash);
+                    }
 
                     if (new Version(tempRuntimeFrameworkVersion).Build == -1)
                     {
                         if (dash > 0)
+                        {
                             runtimeFrameworkVersion = runtimeFrameworkVersion.Substring(0, dash) + ".0" + runtimeFrameworkVersion.Substring(dash);
+                        }
                         else
+                        {
                             tempRuntimeFrameworkVersion += ".0";
+                        }
                     }
 
                     var fxVersion = FxVersion ?? runtimeFrameworkVersion;
@@ -384,15 +436,21 @@ Console.Error.WriteLine("RTFWVers={0}", runtimeFrameworkVersion);
         {
             // Depend on desktop CLR on Windows
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 return psi;
+            }
 
             psi.Arguments = "\"" + psi.FileName + "\" " + psi.Arguments;
 
             // By default, OS X uses 32-bit Mono
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !Force32bit)
+            {
                 psi.FileName = "mono64";
+            }
             else
+            {
                 psi.FileName = "mono";
+            }
 
             return psi;
         }
@@ -403,7 +461,9 @@ Console.Error.WriteLine("RTFWVers={0}", runtimeFrameworkVersion);
 
             // Debug hack to be able to run from the compilation folder
             if (!Directory.Exists(consoleFolder))
+            {
                 consoleFolder = Path.GetFullPath(Path.Combine(ThisAssemblyPath, "..", "..", "..", "..", "xunit.console", "bin", "Debug", "net452", "win7-x86"));
+            }
 
             var executableName = Force32bit ? "xunit.console.x86.exe" : "xunit.console.exe";
             var psi = CheckForMono(new ProcessStartInfo
@@ -428,10 +488,12 @@ Console.Error.WriteLine("RTFWVers={0}", runtimeFrameworkVersion);
 
             // Debug hack to be able to run from the compilation folder
             if (!Directory.Exists(consoleFolder))
+            {
                 //consoleFolder = Path.GetFullPath(Path.Combine(ThisAssemblyPath, "..", "..", "..", "..", "xunit.console", "bin", "Debug", netCoreAppVersion));
                 consoleFolder = Path.GetFullPath(Path.Combine(ThisAssemblyPath, "..", "..", "..", "..", "ACMESharp.IntegrationTests", "bin", "Debug", netCoreAppVersion));
+            }
 
-Console.Error.WriteLine("ConsoleFolder={0}", consoleFolder);
+            Console.Error.WriteLine("ConsoleFolder={0}", consoleFolder);
             if (!Directory.Exists(consoleFolder))
             {
                 WriteLineError($"Could not locate runner DLL for {netCoreAppVersion}; unsupported version of .NET Core");
@@ -445,26 +507,28 @@ Console.Error.WriteLine("ConsoleFolder={0}", consoleFolder);
             var depsFile = targetFileNameWithoutExtension + ".deps.json";
             var runtimeConfigJson = targetFileNameWithoutExtension + ".runtimeconfig.json";
 
-depsFile = Path.GetFullPath(Path.Combine(consoleFolder, depsFile));
-runtimeConfigJson = Path.GetFullPath(Path.Combine(consoleFolder, runtimeConfigJson));
+            depsFile = Path.GetFullPath(Path.Combine(consoleFolder, depsFile));
+            runtimeConfigJson = Path.GetFullPath(Path.Combine(consoleFolder, runtimeConfigJson));
 
 
             var args = $@"exec --fx-version {fxVersion} --depsfile ""{depsFile}"" ";
 
             if (File.Exists(Path.Combine(workingDirectory, runtimeConfigJson)))
+            {
                 args += $@"--runtimeconfig ""{runtimeConfigJson}"" ";
+            }
 
             //args += $@"""{runner}"" ""{targetFileName}"" {extraArgs}";
-args += $@"""{runner}"" {extraArgs}";
+            args += $@"""{runner}"" {extraArgs}";
 
-workingDirectory = Path.GetFullPath(Path.Combine(workingDirectory, "..\\..\\..\\"));
+            workingDirectory = Path.GetFullPath(Path.Combine(workingDirectory, "..\\..\\..\\"));
 
             var psi = new ProcessStartInfo { FileName = DotNetMuxer.MuxerPath, Arguments = args, WorkingDirectory = workingDirectory };
 
             WriteLineDiagnostics($"EXEC: \"{psi.FileName}\" {psi.Arguments}");
             WriteLineDiagnostics($"  IN: {psi.WorkingDirectory}");
-Console.Error.WriteLine($"EXEC: \"{psi.FileName}\" {psi.Arguments}");
-Console.Error.WriteLine($"  IN: {psi.WorkingDirectory}");
+            Console.Error.WriteLine($"EXEC: \"{psi.FileName}\" {psi.Arguments}");
+            Console.Error.WriteLine($"  IN: {psi.WorkingDirectory}");
 
             var runTests = Process.Start(psi);
             runTests.WaitForExit();
@@ -477,13 +541,17 @@ Console.Error.WriteLine($"  IN: {psi.WorkingDirectory}");
         void WriteLine(string message)
         {
             if (!Quiet)
+            {
                 WriteLineWithColor(ConsoleColor.White, message);
+            }
         }
 
         void WriteLineDiagnostics(string message)
         {
             if (InternalDiagnostics)
+            {
                 WriteLineWithColor(ConsoleColor.DarkGray, message);
+            }
         }
 
         void WriteLineError(string message)
@@ -502,7 +570,9 @@ Console.Error.WriteLine($"  IN: {psi.WorkingDirectory}");
             // // if (!NoColor)
             // //     ConsoleHelper.ResetColor();
             if (!NoColor)
+            {
                 Console.ResetColor();
+            }
         }
     }
 }

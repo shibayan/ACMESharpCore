@@ -1,4 +1,4 @@
-namespace ACMESharp.MockServer
+﻿namespace ACMESharp.MockServer
 {
     public interface INonceManager
     {

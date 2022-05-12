@@ -1,13 +1,15 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Serialization;
+
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
+
 using static PKISharp.SimplePKI.PkiKeyPair;
 
 namespace PKISharp.SimplePKI
@@ -67,7 +69,7 @@ namespace PKISharp.SimplePKI
                         var keyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(NativeKey);
                         return keyInfo.GetDerEncoded();
                     }
-                
+
                 default:
                     throw new NotSupportedException();
             }

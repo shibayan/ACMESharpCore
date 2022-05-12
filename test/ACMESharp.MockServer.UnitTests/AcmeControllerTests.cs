@@ -1,18 +1,21 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
+
+using ACMESharp.Protocol;
+using ACMESharp.Protocol.Resources;
+
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Net;
-using ACMESharp.Protocol;
-using System;
-using ACMESharp.Protocol.Resources;
-using System.IO;
-using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using PKISharp.SimplePKI;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ACMESharp.MockServer.UnitTests
 {
@@ -32,10 +35,15 @@ namespace ACMESharp.MockServer.UnitTests
         public static void Init(TestContext ctx)
         {
             if (File.Exists(RepoFilePath))
+            {
                 File.Delete(RepoFilePath);
+            }
+
             var folderPath = Path.GetFullPath(Path.GetDirectoryName(RepoFilePath));
             if (!Directory.Exists(folderPath))
+            {
                 Directory.CreateDirectory(folderPath);
+            }
 
             Environment.SetEnvironmentVariable(Startup.RepositoryFilePathEnvVar, RepoFilePath);
             var hostBuilder = new WebHostBuilder()
@@ -72,7 +80,7 @@ namespace ACMESharp.MockServer.UnitTests
                 Assert.AreEqual(HttpStatusCode.NoContent, resp.StatusCode);
                 Assert.IsTrue(resp.Headers.Contains(Constants.ReplayNonceHeaderName),
                         "contains nonce response header");
-                
+
                 using (var acme = new AcmeProtocolClient(http, dir))
                 {
                     Assert.IsNull(acme.NextNonce);
@@ -87,7 +95,7 @@ namespace ACMESharp.MockServer.UnitTests
         {
             using (var http = _server.CreateClient())
             {
-                var dir =await GetDir();
+                var dir = await GetDir();
                 using (var acme = new AcmeProtocolClient(http, dir))
                 {
                     Assert.IsNull(acme.NextNonce);
@@ -136,7 +144,7 @@ namespace ACMESharp.MockServer.UnitTests
                 {
                     await acme.GetNonceAsync();
                     acme.Account = acct;
-                    
+
                     await Assert.ThrowsExceptionAsync<Exception>(
                         async () => await acme.CreateOrderAsync(dnsIds));
                 }
@@ -380,7 +388,7 @@ namespace ACMESharp.MockServer.UnitTests
                     csr.CertificateExtensions.Add(
                             PkiCertificateExtension.CreateDnsSubjectAlternativeNames(dnsIds.Skip(1)));
                     var csrDer = csr.ExportSigningRequest(PkiEncodingFormat.Der);
-                    
+
                     var finalizedOrder = await acme.FinalizeOrderAsync(order.Payload.Finalize, csrDer);
                     Assert.AreEqual("valid", finalizedOrder.Payload.Status);
                     Assert.IsNotNull(finalizedOrder.Payload.Certificate);
@@ -443,7 +451,7 @@ namespace ACMESharp.MockServer.UnitTests
                     csr.CertificateExtensions.Add(
                             PkiCertificateExtension.CreateDnsSubjectAlternativeNames(dnsIds.Skip(1)));
                     var csrDer = csr.ExportSigningRequest(PkiEncodingFormat.Der);
-                    
+
                     var finalizedOrder = await acme.FinalizeOrderAsync(order.Payload.Finalize, csrDer);
                     Assert.AreEqual("valid", finalizedOrder.Payload.Status);
                     Assert.IsNotNull(finalizedOrder.Payload.Certificate);

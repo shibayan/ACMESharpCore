@@ -1,7 +1,6 @@
-namespace ACMESharp.Authorizations
+﻿namespace ACMESharp.Authorizations;
+
+public interface IChallengeValidationDetails
 {
-    public interface IChallengeValidationDetails
-    {
-        string ChallengeType { get; }
-    }
+    string ChallengeType { get; }
 }

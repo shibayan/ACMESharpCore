@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace ACMESharp.IntegrationTests.Debugging
 {
@@ -9,9 +9,13 @@ namespace ACMESharp.IntegrationTests.Debugging
         static MsBuild()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 MsBuildName = "MSBuild.exe";
+            }
             else
+            {
                 MsBuildName = "msbuild";
+            }
         }
     }
 }

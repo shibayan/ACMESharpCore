@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.X509;
@@ -52,7 +53,9 @@ namespace PKISharp.SimplePKI
                         var pemReader = new PemReader(sr);
                         pkcs10 = pemReader.ReadObject() as Pkcs10CertificationRequest;
                         if (pkcs10 == null)
+                        {
                             throw new Exception("invalid PEM object is not PKCS#10 archive");
+                        }
                     }
                     break;
                 case PkiEncodingFormat.Der:
@@ -94,7 +97,7 @@ namespace PKISharp.SimplePKI
             // // var attr = new AttributeX509(PkcsObjectIdentifiers.Pkcs9AtExtensionRequest,
             // //         new DerSet(extGen.Generate()));
 
-            
+
             // Based on:
             //    http://unitstep.net/blog/2008/10/27/extracting-x509-extensions-from-a-csr-using-the-bouncy-castle-apis/
             //    https://stackoverflow.com/q/24448909/5428506
@@ -122,7 +125,10 @@ namespace PKISharp.SimplePKI
                                     // a leading indicator that it's an Octet String and its length, so we want
                                     // to remove it if that's the case to extract the GeneralNames collection
                                     if (der.Length > 2 && der[0] == 4 && der[1] == der.Length - 2)
+                                    {
                                         der = der.Skip(2).ToArray();
+                                    }
+
                                     var asn1obj = Asn1Object.FromByteArray(der);
                                     var gnames = GeneralNames.GetInstance(asn1obj);
                                     CertificateExtensions.Add(new PkiCertificateExtension
@@ -136,7 +142,7 @@ namespace PKISharp.SimplePKI
 
                             // No need to search any more.
                             break;
-                        }                        
+                        }
                     }
                 }
             }
@@ -161,7 +167,9 @@ namespace PKISharp.SimplePKI
         public byte[] ExportSigningRequest(PkiEncodingFormat format)
         {
             if (!HasPrivateKey)
+            {
                 throw new InvalidOperationException("cannot export CSR without a private key");
+            }
 
             // Based on:
             //    https://github.com/bcgit/bc-csharp/blob/master/crypto/test/src/pkcs/test/PKCS10Test.cs
@@ -214,7 +222,7 @@ namespace PKISharp.SimplePKI
                         pemWriter.WriteObject(pkcs10);
                         return Encoding.UTF8.GetBytes(sw.GetStringBuilder().ToString());
                     }
-                
+
                 case PkiEncodingFormat.Der:
                     return pkcs10.GetDerEncoded();
 
@@ -251,13 +259,15 @@ namespace PKISharp.SimplePKI
 
             // TODO: for some reason, on Linux this was returning negative???
             if (snumInt.SignValue <= 0)
+            {
                 snumInt = snumInt.Negate();
+            }
 
             var snum = snumInt.ToByteArrayUnsigned();
 
             // Key Usage:
             //    Digital Signature, Certificate Signing, Off-line CRL Signing, CRL Signing (86)
-            
+
             return Create(name, _keyPair.PrivateKey, name, notBefore, notAfter, snum,
                     new X509KeyUsage(
                             X509KeyUsage.DigitalSignature |
@@ -321,14 +331,19 @@ namespace PKISharp.SimplePKI
             certGen.SetPublicKey(pubKey);
 
             if (keyUsage == null)
+            {
                 keyUsage = new X509KeyUsage(X509KeyUsage.KeyEncipherment |
                         X509KeyUsage.DigitalSignature);
+            }
+
             if (extKeyUsage == null)
+            {
                 extKeyUsage = new[] {
                     KeyPurposeID.IdKPClientAuth,
                     KeyPurposeID.IdKPServerAuth
                 };
-            
+            }
+
             certGen.AddExtension("2.5.29.15", true, keyUsage);
             certGen.AddExtension("2.5.29.37", true, new DerSequence(extKeyUsage));
 
@@ -410,7 +425,7 @@ namespace PKISharp.SimplePKI
         {
             public RecoverableSerialForm()
             { }
-            
+
             public RecoverableSerialForm(PkiCertificateSigningRequest csr)
             {
                 _subject = csr.SubjectName;

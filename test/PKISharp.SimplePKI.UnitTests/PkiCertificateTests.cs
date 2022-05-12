@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PKISharp.SimplePKI.UnitTests
@@ -14,8 +15,9 @@ namespace PKISharp.SimplePKI.UnitTests
         {
             _testTemp = Path.GetFullPath("_TMP");
             if (!Directory.Exists(_testTemp))
+            {
                 Directory.CreateDirectory(_testTemp);
-
+            }
         }
 
         [TestMethod]
@@ -41,7 +43,7 @@ namespace PKISharp.SimplePKI.UnitTests
             var cert = csr.CreateSelfSigned(
                     DateTime.Now.AddMonths(-1),
                     DateTime.Now.AddMonths(1));
-            
+
             Assert.AreEqual(sn, cert.SubjectName,
                     "Subject Name on PKI Certificate");
 
@@ -97,7 +99,7 @@ namespace PKISharp.SimplePKI.UnitTests
             var isurCert = isurCsr.CreateCa(
                     DateTime.Now.AddMonths(-5),
                     DateTime.Now.AddMonths(5));
-            
+
             Assert.AreEqual(isurName, isurCert.SubjectName,
                     "Issuer Name on Issuer Certificate");
 
@@ -147,7 +149,7 @@ namespace PKISharp.SimplePKI.UnitTests
             var cert = csr.CreateSelfSigned(
                     DateTime.Now.AddMonths(-1),
                     DateTime.Now.AddMonths(1));
-            
+
             Assert.AreEqual(sn, cert.SubjectName,
                     "Subject Name on PKI Certificate");
 
@@ -180,8 +182,10 @@ namespace PKISharp.SimplePKI.UnitTests
             var certWithKey = new System.Security.Cryptography.X509Certificates.X509Certificate2(File.ReadAllBytes(pfxWithKey));
             Assert.IsTrue(certWithKey.HasPrivateKey);
             if (algor != PkiAsymmetricAlgorithm.Ecdsa)
+            {
                 // This throws: System.NotSupportedException: The certificate key algorithm is not supported.
                 Assert.IsNotNull(certWithKey.PrivateKey);
+            }
         }
 
         [TestMethod]
@@ -212,7 +216,7 @@ namespace PKISharp.SimplePKI.UnitTests
             var isurCert = isurCsr.CreateCa(
                     DateTime.Now.AddMonths(-5),
                     DateTime.Now.AddMonths(5));
-            
+
             Assert.AreEqual(isurName, isurCert.SubjectName,
                     "Issuer Name on Issuer Certificate");
 
@@ -246,8 +250,10 @@ namespace PKISharp.SimplePKI.UnitTests
             var certWithKey = new System.Security.Cryptography.X509Certificates.X509Certificate2(File.ReadAllBytes(pfxWithKey));
             Assert.IsTrue(certWithKey.HasPrivateKey);
             if (algor != PkiAsymmetricAlgorithm.Ecdsa)
+            {
                 // This throws: System.NotSupportedException: The certificate key algorithm is not supported.
                 Assert.IsNotNull(certWithKey.PrivateKey);
+            }
         }
 
         [TestMethod]
@@ -273,7 +279,7 @@ namespace PKISharp.SimplePKI.UnitTests
             var cert = csr.CreateSelfSigned(
                     DateTime.Now.AddMonths(-1),
                     DateTime.Now.AddMonths(1));
-            
+
             Assert.AreEqual(sn, cert.SubjectName,
                     "Subject Name on PKI Certificate");
 
@@ -304,7 +310,10 @@ namespace PKISharp.SimplePKI.UnitTests
             // Check Private Key
             var opensslCmd = "rsa";
             if (algor == PkiAsymmetricAlgorithm.Ecdsa)
+            {
                 opensslCmd = "ec";
+            }
+
             using (var proc = OpenSsl.Start($"{opensslCmd} -in {pemWithKey} -check"))
             {
                 proc.WaitForExit();
@@ -316,13 +325,13 @@ namespace PKISharp.SimplePKI.UnitTests
             Assert.IsFalse(certSansKey.HasPrivateKey);
             Assert.IsNull(certSansKey.PrivateKey);
         }
- 
+
         [TestMethod]
         [DataRow(PkiAsymmetricAlgorithm.Rsa, 2048)]
         [DataRow(PkiAsymmetricAlgorithm.Ecdsa, 256)]
         public void SaveLoadCertificate(PkiAsymmetricAlgorithm algor, int bits)
         {
-             var hashAlgor = PkiHashAlgorithm.Sha256;
+            var hashAlgor = PkiHashAlgorithm.Sha256;
 
             var isurName = "CN=SelfSigned";
             var isurKeys = PkiKeyTests.GenerateKeyPair(algor, bits);
@@ -364,10 +373,15 @@ namespace PKISharp.SimplePKI.UnitTests
             PkiCertificate isurCert2;
             PkiCertificate subjCert2;
             using (var fs = new FileStream(selfOut, FileMode.Open))
+            {
                 isurCert2 = PkiCertificate.Load(fs);
+            }
+
             using (var fs = new FileStream(signedOut, FileMode.Open))
+            {
                 subjCert2 = PkiCertificate.Load(fs);
-            
+            }
+
             var bclIsur = isurCert.ToBclCertificate();
             var bclSubj = subjCert.ToBclCertificate();
             var bclIsur2 = isurCert2.ToBclCertificate();
@@ -386,6 +400,6 @@ namespace PKISharp.SimplePKI.UnitTests
                     bclSubj2.GetCertHashString(), "Subject Hash");
             Assert.AreEqual(bclSubj.GetRawCertDataString(),
                     bclSubj2.GetRawCertDataString(), "Subject Raw Data");
-       }
+        }
     }
 }

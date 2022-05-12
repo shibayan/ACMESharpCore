@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ACMESharp.IntegrationTests.Debugging
@@ -16,7 +16,9 @@ namespace ACMESharp.IntegrationTests.Debugging
             {
                 var arg = args[idx++];
                 if (!arg.StartsWith("-"))
+                {
                     throw new ArgumentException($"Unexpected parameter: {arg}");
+                }
 
                 if (!result.TryGetValue(arg, out var values))
                 {
@@ -25,9 +27,13 @@ namespace ACMESharp.IntegrationTests.Debugging
                 }
 
                 if (idx < args.Length && !args[idx].StartsWith("-"))
+                {
                     values.Add(args[idx++]);
+                }
                 else
+                {
                     values.Add(null);
+                }
             }
 
             return result;

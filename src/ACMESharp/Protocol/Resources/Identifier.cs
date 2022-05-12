@@ -1,16 +1,16 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+
 using Newtonsoft.Json;
 
-namespace ACMESharp.Protocol.Resources
-{
-    public class Identifier
-    {
-        [JsonProperty("type", Required = Required.Always)]
-        [Required]
-        public string Type { get; set; }
+namespace ACMESharp.Protocol.Resources;
 
-        [JsonProperty("value", Required = Required.Always)]
-        [Required]
-        public string Value { get; set; }
-    }
+public class Identifier
+{
+    [JsonProperty("type", Required = Required.Always)]
+    [Required]
+    public string Type { get; set; }
+
+    [JsonProperty("value", Required = Required.Always)]
+    [Required]
+    public string Value { get; set; }
 }

@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -27,11 +28,15 @@ namespace ACMESharp.Testing.Xunit
 
             var tName = t.FullName;
             if (TypeName != tName)
+            {
                 throw new Exception($"TestOrderer.TypeName constant [{TypeName}] is WRONG ({tName})");
+            }
 
             var aName = t.Assembly.GetName().Name;
             if (AssemblyName != aName)
+            {
                 throw new Exception($"TestOrderer.AssemblyName constant [{AssemblyName}] is WRONG ({aName})");
+            }
         }
 
         IEnumerable<ITestCollection> ITestCollectionOrderer.OrderTestCollections(IEnumerable<ITestCollection> testCollections)
@@ -70,7 +75,9 @@ namespace ACMESharp.Testing.Xunit
             var toa = cd?.GetCustomAttributes(typeof(TestOrderAttribute)).FirstOrDefault();
 
             if (toa != null)
+            {
                 return toa.GetNamedArgument<int>(nameof(TestOrderAttribute.Order));
+            }
 
             var tt = Type.GetType(tc.DisplayName);
             return tt?.GetCustomAttribute<TestOrderAttribute>().Order ?? int.MaxValue;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,13 +6,17 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ACMESharp.Authorizations;
 using ACMESharp.Crypto;
 using ACMESharp.Protocol;
 using ACMESharp.Protocol.Resources;
 using ACMESharp.Testing.Xunit;
+
 using Microsoft.Extensions.Logging;
+
 using PKISharp.SimplePKI;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -89,7 +93,7 @@ namespace ACMESharp.IntegrationTests
                 {
                     Log.LogInformation("Decoding Authorization {0} Challenge {1}",
                             authzIndex, chlngIndex);
-                    
+
                     var chlngDetails = AuthorizationDecoder.ResolveChallengeForDns01(
                             authz, chlng, Clients.Acme.Signer);
 
@@ -147,7 +151,7 @@ namespace ACMESharp.IntegrationTests
             var oldOrder = testCtx.GroupLoadObject<OrderDetails>("order.json");
             var oldAuthz = testCtx.GroupLoadObject<Authorization[]>("order-authz.json");
 
-            Thread.Sleep(10*1000);
+            Thread.Sleep(10 * 1000);
 
             var authzIndex = 0;
             foreach (var authz in oldAuthz)
@@ -161,7 +165,7 @@ namespace ACMESharp.IntegrationTests
 
                     Log.LogInformation("Waiting on DNS record for Authorization {0} Challenge {1} as per {@Details}",
                             authzIndex, chlngIndex, chlngDetails);
- 
+
                     var created = await ValidateDnsTxtRecord(chlngDetails.DnsRecordName,
                             targetValue: chlngDetails.DnsRecordValue);
 
@@ -222,13 +226,15 @@ namespace ACMESharp.IntegrationTests
                 {
                     int maxTry = 20;
                     int trySleep = 5 * 1000;
-                    
+
                     for (var tryCount = 0; tryCount < maxTry; ++tryCount)
                     {
                         if (tryCount > 0)
+                        {
                             // Wait just a bit for
                             // subsequent queries
                             Thread.Sleep(trySleep);
+                        }
 
                         var updatedChlng = await Clients.Acme.GetChallengeDetailsAsync(chlng.Url);
 
@@ -339,7 +345,7 @@ namespace ACMESharp.IntegrationTests
                 if (valid)
                 {
                     // Once it's valid, then we need to wait for the Cert
-                    
+
                     if (!string.IsNullOrEmpty(updatedOrder.Payload.Certificate))
                     {
                         Log.LogInformation("Certificate URL is ready!");
@@ -394,7 +400,7 @@ namespace ACMESharp.IntegrationTests
             var oldOrder = testCtx.GroupLoadObject<OrderDetails>("order.json");
             var oldAuthz = testCtx.GroupLoadObject<Authorization[]>("order-authz.json");
 
-            Thread.Sleep(10*1000);
+            Thread.Sleep(10 * 1000);
 
             var authzIndex = 0;
             foreach (var authz in oldAuthz)
@@ -408,7 +414,7 @@ namespace ACMESharp.IntegrationTests
 
                     Log.LogInformation("Waiting on DNS record deleted for Authorization {0} Challenge {1} as per {@Details}",
                             authzIndex, chlngIndex, chlngDetails);
- 
+
                     var deleted = await ValidateDnsTxtRecord(chlngDetails.DnsRecordName,
                             targetMissing: true, trySleep: 20000);
 

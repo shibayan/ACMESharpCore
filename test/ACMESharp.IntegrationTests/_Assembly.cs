@@ -1,5 +1,6 @@
-
+﻿
 using ACMESharp.Testing.Xunit;
+
 using Xunit;
 
 [assembly: TestCaseOrderer(TestOrderer.TypeName, TestOrderer.AssemblyName)]
@@ -7,7 +8,7 @@ using Xunit;
 
 [assembly: CollectionBehavior(
     CollectionBehavior.CollectionPerClass
-  //CollectionBehavior.CollectionPerAssembly
-  //,MaxParallelThreads = n
-    ,DisableTestParallelization = true
+    //CollectionBehavior.CollectionPerAssembly
+    //,MaxParallelThreads = n
+    , DisableTestParallelization = true
 )]

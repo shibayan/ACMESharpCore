@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+
 using ACMESharp.Crypto;
 using ACMESharp.Crypto.JOSE;
 using ACMESharp.Crypto.JOSE.Impl;
@@ -14,71 +15,74 @@ using ACMESharp.MockServer.Storage;
 using ACMESharp.Protocol;
 using ACMESharp.Protocol.Messages;
 using ACMESharp.Protocol.Resources;
+
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+
 using Newtonsoft.Json;
+
 using PKISharp.SimplePKI;
 
 namespace ACMESharp.MockServer.Controllers
 {
-// Sample Directory:
-// {
-//   "Directory": "/directory",
-//   "NewNonce": "https://acme-staging-v02.api.letsencrypt.org/acme/new-nonce",
-//   "NewAccount": "https://acme-staging-v02.api.letsencrypt.org/acme/new-acct",
-//   "NewOrder": "https://acme-staging-v02.api.letsencrypt.org/acme/new-order",
-//   "NewAuthz": null,
-//   "RevokeCert": "https://acme-staging-v02.api.letsencrypt.org/acme/revoke-cert",
-//   "KeyChange": "https://acme-staging-v02.api.letsencrypt.org/acme/key-change",
-//   "Meta": {
-//     "TermsOfService": "https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf",
-//     "Website": "https://letsencrypt.org/docs/staging-environment/",
-//     "CaaIdentities": [
-//       "letsencrypt.org"
-//     ],
-//     "ExternalAccountRequired": null
-//   }
-// }
+    // Sample Directory:
+    // {
+    //   "Directory": "/directory",
+    //   "NewNonce": "https://acme-staging-v02.api.letsencrypt.org/acme/new-nonce",
+    //   "NewAccount": "https://acme-staging-v02.api.letsencrypt.org/acme/new-acct",
+    //   "NewOrder": "https://acme-staging-v02.api.letsencrypt.org/acme/new-order",
+    //   "NewAuthz": null,
+    //   "RevokeCert": "https://acme-staging-v02.api.letsencrypt.org/acme/revoke-cert",
+    //   "KeyChange": "https://acme-staging-v02.api.letsencrypt.org/acme/key-change",
+    //   "Meta": {
+    //     "TermsOfService": "https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf",
+    //     "Website": "https://letsencrypt.org/docs/staging-environment/",
+    //     "CaaIdentities": [
+    //       "letsencrypt.org"
+    //     ],
+    //     "ExternalAccountRequired": null
+    //   }
+    // }
 
-// Sample Order Response:
-// Created
-// Server: nginx
-// Boulder-Requester: 6294712
-// Location: https://acme-staging-v02.api.letsencrypt.org/acme/order/6294712/2084859
-// Replay-Nonce: FUrj6pGWocJoAUTr85N6ukDW_KliS75MdDcmZllaQgk
-// X-Frame-Options: DENY
-// Strict-Transport-Security: max-age=604800
-// Cache-Control: no-store, no-cache, max-age=0
-// Pragma: no-cache
-// Date: Fri, 15 Jun 2018 21:06:12 GMT
-// Connection: keep-alive
-// Content-Type: application/json
-// Content-Length: 815
-// Expires: Fri, 15 Jun 2018 21:06:12 GMT
-// {
-//   "status": "pending",
-//   "expires": "2018-06-22T21:06:12Z",
-//   "identifiers": [
-//     {
-//       "type": "dns",
-//       "value": "8b-15-d9-10-57-1st.integtests.acme2.zyborg.io"
-//     },
-//     {
-//       "type": "dns",
-//       "value": "8b-2e-54-44-17-3rd.integtests.acme2.zyborg.io"
-//     },
-//     {
-//       "type": "dns",
-//       "value": "9d-d6-29-43-84-2nd.integtests.acme2.zyborg.io"
-//     }
-//   ],
-//   "authorizations": [
-//     "https://acme-staging-v02.api.letsencrypt.org/acme/authz/740KRMwcT0UrLXdUKOlgMnfNbzpSQtRaWjbyA1UgIJ4",
-//     "https://acme-staging-v02.api.letsencrypt.org/acme/authz/EytmrLH_JI61fDCfUdesq1bcp6nHBT0wDXmmdT4bjzQ",
-//     "https://acme-staging-v02.api.letsencrypt.org/acme/authz/ZQaC05HtAxpv5RB2Ik2GvY_Cp-izmSCItRZor3gfcX0"
-//   ],
-//   "finalize": "https://acme-staging-v02.api.letsencrypt.org/acme/finalize/6294712/2084859"
-// }
+    // Sample Order Response:
+    // Created
+    // Server: nginx
+    // Boulder-Requester: 6294712
+    // Location: https://acme-staging-v02.api.letsencrypt.org/acme/order/6294712/2084859
+    // Replay-Nonce: FUrj6pGWocJoAUTr85N6ukDW_KliS75MdDcmZllaQgk
+    // X-Frame-Options: DENY
+    // Strict-Transport-Security: max-age=604800
+    // Cache-Control: no-store, no-cache, max-age=0
+    // Pragma: no-cache
+    // Date: Fri, 15 Jun 2018 21:06:12 GMT
+    // Connection: keep-alive
+    // Content-Type: application/json
+    // Content-Length: 815
+    // Expires: Fri, 15 Jun 2018 21:06:12 GMT
+    // {
+    //   "status": "pending",
+    //   "expires": "2018-06-22T21:06:12Z",
+    //   "identifiers": [
+    //     {
+    //       "type": "dns",
+    //       "value": "8b-15-d9-10-57-1st.integtests.acme2.zyborg.io"
+    //     },
+    //     {
+    //       "type": "dns",
+    //       "value": "8b-2e-54-44-17-3rd.integtests.acme2.zyborg.io"
+    //     },
+    //     {
+    //       "type": "dns",
+    //       "value": "9d-d6-29-43-84-2nd.integtests.acme2.zyborg.io"
+    //     }
+    //   ],
+    //   "authorizations": [
+    //     "https://acme-staging-v02.api.letsencrypt.org/acme/authz/740KRMwcT0UrLXdUKOlgMnfNbzpSQtRaWjbyA1UgIJ4",
+    //     "https://acme-staging-v02.api.letsencrypt.org/acme/authz/EytmrLH_JI61fDCfUdesq1bcp6nHBT0wDXmmdT4bjzQ",
+    //     "https://acme-staging-v02.api.letsencrypt.org/acme/authz/ZQaC05HtAxpv5RB2Ik2GvY_Cp-izmSCItRZor3gfcX0"
+    //   ],
+    //   "finalize": "https://acme-staging-v02.api.letsencrypt.org/acme/finalize/6294712/2084859"
+    // }
 
 
     [Route(AcmeController.ControllerRoute)]
@@ -112,7 +116,7 @@ namespace ACMESharp.MockServer.Controllers
         }
 
         [HttpPost("new-acct")]
-        public ActionResult<Account> NewAccount([FromBody]JwsSignedPayload signedPayload)
+        public ActionResult<Account> NewAccount([FromBody] JwsSignedPayload signedPayload)
         {
             var ph = ExtractProtectedHeader(signedPayload);
             var jwkSer = JsonConvert.SerializeObject(ph.Jwk);
@@ -128,7 +132,7 @@ namespace ACMESharp.MockServer.Controllers
             // Then compute the acct-specific URL based on the assigned ID
             // Sample Kid: https://acme-staging-v02.api.letsencrypt.org/acme/acct/6484231
             var acctId = dbAcct.Id.ToString();
-          //var kid = ComputeRelativeUrl($"acct/{acctId}").ToString();
+            //var kid = ComputeRelativeUrl($"acct/{acctId}").ToString();
             var kid = Url.Action(nameof(GetAccount), new { acctId });
 
             // Then we actually fill out the details            
@@ -162,17 +166,21 @@ namespace ACMESharp.MockServer.Controllers
         public ActionResult<Account> GetAccount(string acctId)
         {
             if (!int.TryParse(acctId, out var id))
+            {
                 return NotFound();
+            }
 
             var acct = _repo.GetAccount(id);
             if (acct == null)
+            {
                 return NotFound();
+            }
 
             return acct.Details.Payload;
         }
 
         [HttpPost("new-order")]
-        public ActionResult<Order> NewOrder([FromBody]JwsSignedPayload signedPayload)
+        public ActionResult<Order> NewOrder([FromBody] JwsSignedPayload signedPayload)
         {
             var ph = ExtractProtectedHeader(signedPayload);
 
@@ -182,19 +190,28 @@ namespace ACMESharp.MockServer.Controllers
 
             var acct = _repo.GetAccountByKid(ph.Kid);
             if (acct == null)
+            {
                 throw new Exception("could not resolve account");
+            }
+
             var acctId = acct.Id.ToString();
 
             ValidateAccount(acct, signedPayload);
 
             if (requ.Identifiers.Length == 0)
+            {
                 throw new Exception("at least one identifier is required");
-            
+            }
+
             if (requ.Identifiers.Length > 100)
+            {
                 throw new Exception("too many identifiers");
+            }
 
             if (requ.Identifiers.Count(x => x.Type != "dns") > 0)
+            {
                 throw new Exception("unsupported identifier type");
+            }
 
             // We start by saving an empty order so we can compute the next ID
             var dbOrder = new DbOrder();
@@ -217,7 +234,9 @@ namespace ACMESharp.MockServer.Controllers
                 var isWildcard = dnsId.Value.StartsWith("*.");
 
                 if (isWildcard)
+                {
                     chlngTypes = ChallengeTypesForWildcard;
+                }
 
                 foreach (var chlngType in chlngTypes)
                 {
@@ -302,24 +321,35 @@ namespace ACMESharp.MockServer.Controllers
         public ActionResult<Order> GetOrder(string acctId, string orderId)
         {
             if (!int.TryParse(acctId, out var acctIdNum))
+            {
                 return NotFound();
+            }
+
             if (!int.TryParse(orderId, out var orderIdNum))
+            {
                 return NotFound();
+            }
 
             var order = _repo.GetOrderByUrl(Request.GetEncodedUrl());
             if (order == null)
+            {
                 return NotFound();
+            }
+
             return order.Details.Payload;
         }
 
         [HttpPost("order/{acctId}/{orderId}")]
-        public ActionResult<Order> GetOrderPost(string acctId, string orderId, [FromBody]JwsSignedPayload signedPayload)
+        public ActionResult<Order> GetOrderPost(string acctId, string orderId, [FromBody] JwsSignedPayload signedPayload)
         {
             var ph = ExtractProtectedHeader(signedPayload);
             ValidateNonce(ph);
             var acct = _repo.GetAccountByKid(ph.Kid);
             if (acct == null)
+            {
                 throw new Exception("could not resolve account");
+            }
+
             ValidateAccount(acct, signedPayload);
             var requ = ExtractPayload<string>(signedPayload);
             if (requ != null)
@@ -333,12 +363,17 @@ namespace ACMESharp.MockServer.Controllers
         // "finalize": "https://acme-staging-v02.api.letsencrypt.org/acme/finalize/6294712/2084859"
         [HttpPost("finalize/{acctId}/{orderId}")]
         public ActionResult<Order> FinalizeOrder(string acctId, string orderId,
-                [FromBody]JwsSignedPayload signedPayload)
+                [FromBody] JwsSignedPayload signedPayload)
         {
             if (!int.TryParse(acctId, out var acctIdNum))
+            {
                 return NotFound();
+            }
+
             if (!int.TryParse(orderId, out var orderIdNum))
+            {
                 return NotFound();
+            }
 
             var ph = ExtractProtectedHeader(signedPayload);
 
@@ -346,20 +381,28 @@ namespace ACMESharp.MockServer.Controllers
 
             var acct = _repo.GetAccountByKid(ph.Kid);
             if (acct == null)
+            {
                 throw new Exception("could not resolve account");
+            }
 
             ValidateAccount(acct, signedPayload);
 
             var dbOrder = _repo.GetOrder(orderIdNum);
             if (dbOrder == null || dbOrder.AccountId != acctIdNum)
+            {
                 return NotFound();
+            }
 
             if (acct.Id != dbOrder.AccountId)
+            {
                 throw new Exception("inconsistent state -- "
                         + "Challenge Order does not belong to resolved Account");
+            }
 
             if (dbOrder.Details.Payload.Status != "pending")
+            {
                 throw new Exception("Order no longer pending");
+            }
 
             var requ = ExtractPayload<FinalizeOrderRequest>(signedPayload);
             var encodedCsr = CryptoHelper.Base64.UrlDecode(requ.Csr);
@@ -411,15 +454,17 @@ namespace ACMESharp.MockServer.Controllers
         {
             var dbCert = _repo.GetCertificateByKey(certKey);
             if (dbCert == null)
+            {
                 return NotFound();
-            
+            }
+
             return dbCert.Pem;
         }
 
         // "revoke-cert": "https://tools.ietf.org/html/draft-ietf-acme-acme-18#section-7.6"
         [HttpPost("revoke-cert")]
         public ActionResult<bool> Revoke(string acctId,
-            [FromBody]JwsSignedPayload signedPayload)
+            [FromBody] JwsSignedPayload signedPayload)
         {
             var ph = ExtractProtectedHeader(signedPayload);
 
@@ -429,7 +474,9 @@ namespace ACMESharp.MockServer.Controllers
 
             var acct = _repo.GetAccountByKid(ph.Kid);
             if (acct == null)
+            {
                 throw new Exception("could not resolve account");
+            }
 
             ValidateAccount(acct, signedPayload);
 
@@ -438,10 +485,14 @@ namespace ACMESharp.MockServer.Controllers
 
             var dbCert = _repo.GetCertificateByNative(derEncodedCertificate);
             if (dbCert == null)
+            {
                 return NotFound();
+            }
 
             if (dbCert.RevokedReason != null)
+            {
                 throw new Exception("certificate already revoked");
+            }
 
             dbCert.RevokedReason = requ.Reason;
             _repo.SaveCertificate(dbCert);
@@ -498,19 +549,24 @@ namespace ACMESharp.MockServer.Controllers
             var authzUrl = Request.GetEncodedUrl();
             var dbAuthz = _repo.GetAuthorizationByUrl(authzUrl);
             if (dbAuthz == null)
+            {
                 return NotFound();
-            
+            }
+
             return dbAuthz.Payload;
         }
 
         [HttpPost("authz/{authzKey}")]
-        public ActionResult<Authorization> GetAuthorizationPost(string authzKey, [FromBody]JwsSignedPayload signedPayload)
+        public ActionResult<Authorization> GetAuthorizationPost(string authzKey, [FromBody] JwsSignedPayload signedPayload)
         {
             var ph = ExtractProtectedHeader(signedPayload);
             ValidateNonce(ph);
             var acct = _repo.GetAccountByKid(ph.Kid);
             if (acct == null)
+            {
                 throw new Exception("could not resolve account");
+            }
+
             ValidateAccount(acct, signedPayload);
             var requ = ExtractPayload<string>(signedPayload);
             if (requ != null)
@@ -527,14 +583,16 @@ namespace ACMESharp.MockServer.Controllers
             var chlngUrl = Request.GetEncodedUrl();
             var dbChlng = _repo.GetChallengeByUrl(chlngUrl);
             if (dbChlng == null)
+            {
                 return NotFound();
-            
+            }
+
             return dbChlng.Payload;
         }
 
         [HttpPost("challenge/{authzKey}/{challengeId}")]
         public ActionResult<Challenge> AnswerChallenge(string authzKey, string challengeId,
-                [FromBody]JwsSignedPayload signedPayload)
+                [FromBody] JwsSignedPayload signedPayload)
         {
             var ph = ExtractProtectedHeader(signedPayload);
 
@@ -542,27 +600,41 @@ namespace ACMESharp.MockServer.Controllers
 
             var acct = _repo.GetAccountByKid(ph.Kid);
             if (acct == null)
+            {
                 throw new Exception("could not resolve account");
+            }
 
             ValidateAccount(acct, signedPayload);
 
             var chlngUrl = Request.GetEncodedUrl();
             var dbChlng = _repo.GetChallengeByUrl(chlngUrl);
             if (dbChlng == null)
+            {
                 return NotFound();
+            }
+
             var dbAuthz = _repo.GetAuthorization(dbChlng.AuthorizationId);
             if (dbAuthz == null)
+            {
                 return NotFound();
+            }
+
             var dbOrder = _repo.GetOrder(dbAuthz.OrderId);
             if (dbOrder == null)
+            {
                 return NotFound();
-            
+            }
+
             if (acct.Id != dbOrder.AccountId)
+            {
                 throw new Exception("inconsistent state -- "
                         + "Challenge Order does not belong to resolved Account");
+            }
 
             if (dbChlng.Payload.Status != "pending")
+            {
                 throw new Exception("Challenge no longer pending");
+            }
 
             string answer;
             if (dbChlng.Payload.Type == "dns-01")
@@ -641,7 +713,9 @@ namespace ACMESharp.MockServer.Controllers
         void ValidateNonce(ProtectedHeader protectedHeader)
         {
             if (!_nonceMgr.ValidateNonce(protectedHeader.Nonce))
+            {
                 throw new Exception("Bad Nonce");
+            }
         }
 
         void ValidateAccount(DbAccount acct, JwsSignedPayload signedPayload)
@@ -650,12 +724,20 @@ namespace ACMESharp.MockServer.Controllers
             var jwk = JsonConvert.DeserializeObject<Dictionary<string, string>>(acct.Jwk);
 
             if (string.IsNullOrEmpty(ph.Alg))
+            {
                 throw new Exception("invalid JWS header, missing 'alg'");
+            }
+
             if (string.IsNullOrEmpty(ph.Url))
+            {
                 throw new Exception("invalid JWS header, missing 'url'");
+            }
+
             if (string.IsNullOrEmpty(ph.Nonce))
+            {
                 throw new Exception("invalid JWS header, missing 'nonce'");
-            
+            }
+
             IJwsTool tool = null;
             switch (ph.Alg)
             {
@@ -690,9 +772,11 @@ namespace ACMESharp.MockServer.Controllers
 
             var sigInput = $"{signedPayload.Protected}.{signedPayload.Payload}";
             var sigInputBytes = Encoding.ASCII.GetBytes(sigInput);
-            
+
             if (!tool.Verify(sigInputBytes, sig))
+            {
                 throw new Exception("account signature failure");
+            }
         }
 
         string ResolveCaCertPem()

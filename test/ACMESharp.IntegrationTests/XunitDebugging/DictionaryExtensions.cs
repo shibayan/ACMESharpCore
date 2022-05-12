@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ACMESharp.IntegrationTests.Debugging
@@ -9,7 +9,9 @@ namespace ACMESharp.IntegrationTests.Debugging
         {
             var result = TryGetParameterWithoutValue(dictionary, key);
             if (result)
+            {
                 dictionary.Remove(key);
+            }
 
             return result;
         }
@@ -19,7 +21,9 @@ namespace ACMESharp.IntegrationTests.Debugging
             if (dictionary.TryGetSingleValue(key, out var result))
             {
                 if (result == null)
+                {
                     throw new ArgumentException($"Missing value for option '{key}'");
+                }
 
                 dictionary.Remove(key);
             }
@@ -31,7 +35,9 @@ namespace ACMESharp.IntegrationTests.Debugging
         {
             var result = TryGetParameterWithoutValue(dictionary, key);
             if (result)
+            {
                 dictionary.Remove(key);
+            }
 
             return result;
         }
@@ -41,7 +47,9 @@ namespace ACMESharp.IntegrationTests.Debugging
             if (dictionary.TryGetSingleValue(key, out var result))
             {
                 if (result != null)
+                {
                     throw new ArgumentException($"Option '{key}' should not have a value");
+                }
 
                 return true;
             }
@@ -54,10 +62,14 @@ namespace ACMESharp.IntegrationTests.Debugging
             value = null;
 
             if (!dictionary.TryGetValue(key, out var values))
+            {
                 return false;
+            }
 
             if (values.Count > 1)
+            {
                 throw new ArgumentException($"Option '{key}' cannot be set more than once");
+            }
 
             value = values[0];
             return true;

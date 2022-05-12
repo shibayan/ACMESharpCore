@@ -1,9 +1,11 @@
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using ACMESharp.Crypto;
 using ACMESharp.Crypto.JOSE.Impl;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ACMESharp.UnitTests
@@ -29,11 +31,11 @@ namespace ACMESharp.UnitTests
                     " \"http://example.com/is_root\":true}";
 
             var utf8 = Encoding.UTF8.GetBytes(sampleHeader);
-            var b64u = Convert.ToBase64String(utf8).Replace("=","");
+            var b64u = Convert.ToBase64String(utf8).Replace("=", "");
             Assert.AreEqual("eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9", b64u);
 
             utf8 = Encoding.UTF8.GetBytes(samplePayload);
-            b64u = Convert.ToBase64String(utf8).Replace("=","");
+            b64u = Convert.ToBase64String(utf8).Replace("=", "");
             Assert.AreEqual("eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ", b64u);
 
 
@@ -45,7 +47,7 @@ namespace ACMESharp.UnitTests
             string protectedSample = // From the RFC example
                     "{\"typ\":\"JWT\",\r\n" +
                     " \"alg\":\"HS256\"}";
-          
+
             var protectedBytesExpected = new byte[] // From the RFC example
             {
                 123, 34, 116, 121, 112, 34, 58, 34, 74, 87, 84, 34, 44, 13, 10,
@@ -53,7 +55,7 @@ namespace ACMESharp.UnitTests
             };
             var protectedBytesActual = Encoding.UTF8.GetBytes(protectedSample);
             CollectionAssert.AreEqual(protectedBytesExpected, protectedBytesActual);
-           
+
             string protectedB64uExpected = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9"; // From the RFC example
             string protectedB64uActual = CryptoHelper.Base64.UrlEncode(protectedBytesActual);
             Assert.AreEqual(protectedB64uExpected, protectedB64uActual);
@@ -214,12 +216,12 @@ namespace ACMESharp.UnitTests
             var rsaKeyParams = new System.Security.Cryptography.RSAParameters
             {
                 Exponent = CryptoHelper.Base64.UrlDecode(rsaKeyPartE),
-                Modulus  = CryptoHelper.Base64.UrlDecode(rsaKeyPartN),
-                D        = CryptoHelper.Base64.UrlDecode(rsaKeyPartD),
-                P        = CryptoHelper.Base64.UrlDecode(rsaKeyPartP),
-                Q        = CryptoHelper.Base64.UrlDecode(rsaKeyPartQ),
-                DP       = CryptoHelper.Base64.UrlDecode(rsaKeyPartDP),
-                DQ       = CryptoHelper.Base64.UrlDecode(rsaKeyPartDQ),
+                Modulus = CryptoHelper.Base64.UrlDecode(rsaKeyPartN),
+                D = CryptoHelper.Base64.UrlDecode(rsaKeyPartD),
+                P = CryptoHelper.Base64.UrlDecode(rsaKeyPartP),
+                Q = CryptoHelper.Base64.UrlDecode(rsaKeyPartQ),
+                DP = CryptoHelper.Base64.UrlDecode(rsaKeyPartDP),
+                DQ = CryptoHelper.Base64.UrlDecode(rsaKeyPartDQ),
                 InverseQ = CryptoHelper.Base64.UrlDecode(rsaKeyPartQI)
             };
 
@@ -312,7 +314,8 @@ namespace ACMESharp.UnitTests
         public void SerDesEC()
         {
             var rng = RandomNumberGenerator.Create();
-            for (var i = 0; i < 1000; i++) { 
+            for (var i = 0; i < 1000; i++)
+            {
                 var original = new ESJwsTool(); // Default for ISigner
                 original.Init();
                 var rawX = new byte[8034];

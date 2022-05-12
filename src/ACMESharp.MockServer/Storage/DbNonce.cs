@@ -1,4 +1,4 @@
-namespace ACMESharp.MockServer.Storage
+﻿namespace ACMESharp.MockServer.Storage
 {
     public class DbNonce
     {

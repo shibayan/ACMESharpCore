@@ -1,15 +1,17 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
+
 using BclCertificate = System.Security.Cryptography.X509Certificates.X509Certificate2;
 
 namespace PKISharp.SimplePKI
@@ -40,7 +42,7 @@ namespace PKISharp.SimplePKI
             return new PkiCertificate
             {
                 NativeCertificate = new X509CertificateParser().ReadCertificate(der),
-            }; 
+            };
         }
 
         public byte[] Export(PkiEncodingFormat format)
@@ -57,7 +59,7 @@ namespace PKISharp.SimplePKI
 
                 case PkiEncodingFormat.Der:
                     return NativeCertificate.GetEncoded();
-                
+
                 default:
                     throw new NotSupportedException();
             }
@@ -77,7 +79,10 @@ namespace PKISharp.SimplePKI
                     {
                         byte[] bytes = privateKey?.Export(PkiEncodingFormat.Pem, password);
                         if (bytes != null)
+                        {
                             buff.Write(bytes, 0, bytes.Length);
+                        }
+
                         bytes = Export(PkiEncodingFormat.Pem);
                         buff.Write(bytes, 0, bytes.Length);
                         if (chain != null)
@@ -95,10 +100,14 @@ namespace PKISharp.SimplePKI
                     var alias = AliasOf(this);
                     var store = new Pkcs12StoreBuilder().Build();
                     if (privateKey != null)
+                    {
                         store.SetKeyEntry(alias, new AsymmetricKeyEntry(privateKey.NativeKey),
                                 new[] { new X509CertificateEntry(NativeCertificate) });
+                    }
                     else
+                    {
                         store.SetCertificateEntry(alias, new X509CertificateEntry(NativeCertificate));
+                    }
 
                     if (chain != null)
                     {
@@ -162,7 +171,7 @@ namespace PKISharp.SimplePKI
                 return new PkiCertificate
                 {
                     NativeCertificate = new X509CertificateParser().ReadCertificate(_certificate),
-                }; 
+                };
             }
         }
     }

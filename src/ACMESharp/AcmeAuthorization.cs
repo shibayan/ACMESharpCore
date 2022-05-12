@@ -1,13 +1,12 @@
-using ACMESharp.Protocol.Resources;
+﻿using ACMESharp.Protocol.Resources;
 
-namespace ACMESharp
+namespace ACMESharp;
+
+public class AcmeAuthorization
 {
-    public class AcmeAuthorization
-    {
-        public string DetailsUrl { get; set; }
+    public string DetailsUrl { get; set; }
 
-        public string FetchError { get; set; }
+    public string FetchError { get; set; }
 
-        public Authorization Details { get; set; }
-    }
+    public Authorization Details { get; set; }
 }

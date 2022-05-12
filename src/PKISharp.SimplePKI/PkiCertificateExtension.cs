@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 
@@ -23,7 +24,9 @@ namespace PKISharp.SimplePKI
         {
             var that = obj as PkiCertificateExtension;
             if (that == null)
+            {
                 return -1;
+            }
 
             var thisVal = this.Identifier.ToString()
                     + this.IsCritical

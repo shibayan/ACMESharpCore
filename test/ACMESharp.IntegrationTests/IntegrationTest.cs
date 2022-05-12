@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+
 using ACMESharp.Testing.Xunit;
+
 using Newtonsoft.Json;
 
 namespace ACMESharp.IntegrationTests
@@ -23,11 +25,13 @@ namespace ACMESharp.IntegrationTests
 
         protected CallerContext SetTestContext(
                 int subseq = -1,
-                [System.Runtime.CompilerServices.CallerMemberName]string caller = "")
+                [System.Runtime.CompilerServices.CallerMemberName] string caller = "")
         {
             var m = this.GetType().GetMember(caller);
             if (m.Length != 1)
+            {
                 throw new InvalidOperationException("Unable to resolve single member from caller name");
+            }
 
             LastContext = new CallerContext
             {
@@ -54,9 +58,13 @@ namespace ACMESharp.IntegrationTests
         {
             var toName = $"{opName}-AcmeInput.json";
             if (acmeInput == null)
+            {
                 LastContext.WriteTo(toName, "");
+            }
             else
+            {
                 LastContext.WriteTo(toName, JsonConvert.SerializeObject(acmeInput));
+            }
         }
 
         protected void BeforeAcmeSend(string opName, HttpRequestMessage requ)
@@ -67,7 +75,9 @@ namespace ACMESharp.IntegrationTests
                 .Select(x => $"// {x.Key}: {string.Join(",", x.Value)}");
             LastContext.AppendTo(toName, string.Join("\r\n", headers));
             if (requ.Content != null)
+            {
                 LastContext.AppendTo(toName, "\r\n" + requ.Content.ReadAsStringAsync().Result);
+            }
         }
 
         protected void AfterAcmeSend(string opName, HttpResponseMessage resp)
@@ -109,7 +119,7 @@ namespace ACMESharp.IntegrationTests
         {
             State.SaveObject($"{ComputePrefix(subseq)}-{saveName}", o);
         }
-        
+
         public T LoadObject<T>(string saveName, int subseq = -1)
         {
             return State.LoadObject<T>($"{ComputePrefix(subseq)}-{saveName}");
@@ -122,8 +132,11 @@ namespace ACMESharp.IntegrationTests
 
             var pfx = $"{to:D3}-{nm}";
             if (subseq >= 0)
+            {
                 pfx += $"-{subseq}";
-            return pfx;                
+            }
+
+            return pfx;
         }
 
         public class CallerContext
@@ -210,20 +223,30 @@ namespace ACMESharp.IntegrationTests
             private string ComputeGroupPrefix()
             {
                 if (TestGroup != null)
+                {
                     return $"{TestGroup}_";
+                }
                 else
+                {
                     return string.Empty;
+                }
             }
 
             private string ComputePrefix()
             {
                 var pfx = TestOrder.ToString("D4");
                 if (Subsequence >= 0)
+                {
                     pfx += $"-{Subsequence}";
+                }
+
                 if (TestGroup != null)
+                {
                     pfx += $"_{TestGroup}";
-                return pfx;                
+                }
+
+                return pfx;
             }
-        }        
+        }
     }
 }

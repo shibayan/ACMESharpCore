@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PKISharp.SimplePKI.UnitTests
@@ -14,8 +15,9 @@ namespace PKISharp.SimplePKI.UnitTests
         {
             _testTemp = Path.GetFullPath("_TMP");
             if (!Directory.Exists(_testTemp))
+            {
                 Directory.CreateDirectory(_testTemp);
-
+            }
         }
 
         internal static PkiKeyPair GenerateKeyPair(PkiAsymmetricAlgorithm algor, int bits)
@@ -28,7 +30,7 @@ namespace PKISharp.SimplePKI.UnitTests
                     return PkiKeyPair.GenerateEcdsaKeyPair(bits);
                 default:
                     throw new NotSupportedException(nameof(PkiAsymmetricAlgorithm));
-            }            
+            }
         }
 
         [TestMethod]
@@ -38,7 +40,7 @@ namespace PKISharp.SimplePKI.UnitTests
         public void CreateRsaKeyPair(int bits)
         {
             var rsaKeys = PkiKeyPair.GenerateRsaKeyPair(bits);
-            
+
             Assert.AreEqual(PkiAsymmetricAlgorithm.Rsa, rsaKeys.Algorithm);
             Assert.IsFalse(rsaKeys.PublicKey.IsPrivate);
             Assert.AreEqual(PkiAsymmetricAlgorithm.Rsa, rsaKeys.PublicKey.Algorithm);
@@ -50,7 +52,7 @@ namespace PKISharp.SimplePKI.UnitTests
 
             File.WriteAllBytes(pubOut, rsaKeys.PublicKey.Export(PkiEncodingFormat.Pem));
             File.WriteAllBytes(prvOut, rsaKeys.PrivateKey.Export(PkiEncodingFormat.Pem));
-            
+
             using (var proc = OpenSsl.Start($"rsa -in {pubOut} -pubin"))
             {
                 proc.WaitForExit();
@@ -69,7 +71,7 @@ namespace PKISharp.SimplePKI.UnitTests
         public void ExportRsaKeyPairWithPassword(int bits)
         {
             var rsaKeys = PkiKeyPair.GenerateRsaKeyPair(bits);
-            
+
             Assert.AreEqual(PkiAsymmetricAlgorithm.Rsa, rsaKeys.Algorithm);
             Assert.IsFalse(rsaKeys.PublicKey.IsPrivate);
             Assert.AreEqual(PkiAsymmetricAlgorithm.Rsa, rsaKeys.PublicKey.Algorithm);
@@ -83,7 +85,7 @@ namespace PKISharp.SimplePKI.UnitTests
                     password: "123456".ToCharArray()));
             File.WriteAllBytes(prvOut, rsaKeys.PrivateKey.Export(PkiEncodingFormat.Pem,
                     password: "123456".ToCharArray()));
-            
+
             using (var proc = OpenSsl.Start($"rsa -in {pubOut} -pubin"))
             {
                 proc.WaitForExit();
@@ -117,7 +119,7 @@ namespace PKISharp.SimplePKI.UnitTests
             File.WriteAllBytes(pubOut, ecdsaKeys.PublicKey.Export(PkiEncodingFormat.Pem));
             File.WriteAllBytes(prvOut, ecdsaKeys.PrivateKey.Export(PkiEncodingFormat.Pem));
 
-            
+
             using (var proc = OpenSsl.Start($"ec -in {pubOut} -pubin"))
             {
                 proc.WaitForExit();

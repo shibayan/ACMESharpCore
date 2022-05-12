@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,14 +7,19 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ACMESharp.Authorizations;
 using ACMESharp.Crypto;
 using ACMESharp.Protocol;
 using ACMESharp.Protocol.Resources;
 using ACMESharp.Testing.Xunit;
+
 using DnsClient;
+
 using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -65,12 +70,12 @@ namespace ACMESharp.IntegrationTests
 
         public static Random Rng { get; } = new Random();
 
-        protected  static readonly IEnumerable<string> _contacts =
+        protected static readonly IEnumerable<string> _contacts =
                 new[] { "mailto:acme-test-foo@mailinator.com" };
-        
-        protected  const string TestDnsSubdomain = "integtests.acme2.zyborg.io";
 
-        protected  const string TestHttpSubdomain = "acmetesting.zyborg.io";
+        protected const string TestDnsSubdomain = "integtests.acme2.zyborg.io";
+
+        protected const string TestHttpSubdomain = "acmetesting.zyborg.io";
 
         [Fact]
         [TestOrder(0)]
@@ -153,7 +158,7 @@ namespace ACMESharp.IntegrationTests
             Log.LogWarning("Temporary reformating NewOrder Expires date:"
                     + " {0:yyyy-MM-ddTHH:mm:ss.fffffff zzz} -> {1:yyyy-MM-ddTHH:mm:ss.fffffff zzz}",
                     newOrder.Payload.Expires, newOrderExpires);
-            
+
             oldOrder.Payload.Expires = oldOrderExpires.ToString();
             newOrder.Payload.Expires = newOrderExpires.ToString();
 
@@ -183,10 +188,12 @@ namespace ACMESharp.IntegrationTests
             for (var tryCount = 0; tryCount < maxTry; ++tryCount)
             {
                 if (tryCount > 0)
+                {
                     // Wait just a bit for
                     // subsequent queries
                     Thread.Sleep(trySleep);
-                
+                }
+
                 var x = await Clients.Dns.QueryAsync(name, QueryType.TXT);
 
                 if (x.HasError)
@@ -195,7 +202,9 @@ namespace ACMESharp.IntegrationTests
                     if ("Non-Existent Domain".Equals(x.ErrorMessage, StringComparison.OrdinalIgnoreCase))
                     {
                         if (targetMissing)
+                        {
                             return true;
+                        }
                     }
                     else
                     {
@@ -242,10 +251,12 @@ namespace ACMESharp.IntegrationTests
             for (var tryCount = 0; tryCount < maxTry; ++tryCount)
             {
                 if (tryCount > 0)
+                {
                     // Wait just a bit for
                     // subsequent queries
                     Thread.Sleep(trySleep);
-                
+                }
+
                 var x = await Clients.Http.GetAsync(url);
 
                 if (x.StatusCode != HttpStatusCode.OK)
@@ -254,7 +265,9 @@ namespace ACMESharp.IntegrationTests
                     if (x.StatusCode == HttpStatusCode.NotFound)
                     {
                         if (targetMissing)
+                        {
                             return true;
+                        }
                     }
                     else
                     {

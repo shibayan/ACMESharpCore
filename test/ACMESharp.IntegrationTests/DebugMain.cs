@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -27,7 +28,9 @@ namespace ACMESharp.IntegrationTests
 
             var con = t.GetConstructors();
             if (con.Length != 1)
+            {
                 throw new Exception("Class under test should have exactly 1 constructor");
+            }
 
             var ifaces = t.GetInterfaces();
             foreach (var ifc in ifaces)
@@ -50,7 +53,10 @@ namespace ACMESharp.IntegrationTests
                 var cp = conObjects.FirstOrDefault(x =>
                         p.ParameterType.IsAssignableFrom(x.GetType()));
                 if (cp == null)
+                {
                     throw new Exception("No resolved fixtures available to assign to constructor parameter: " + p.Name);
+                }
+
                 conParams.Add(cp);
             }
 
@@ -60,7 +66,9 @@ namespace ACMESharp.IntegrationTests
             {
                 var factAttr = m.GetCustomAttribute<FactAttribute>();
                 if (factAttr == null)
+                {
                     continue;
+                }
 
                 if (!string.IsNullOrEmpty(factAttr.Skip))
                 {

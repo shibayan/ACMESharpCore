@@ -1,6 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.IO;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PKISharp.SimplePKI.UnitTests
@@ -14,8 +15,9 @@ namespace PKISharp.SimplePKI.UnitTests
         {
             _testTemp = Path.GetFullPath("_TMP");
             if (!Directory.Exists(_testTemp))
+            {
                 Directory.CreateDirectory(_testTemp);
-
+            }
         }
 
         [TestMethod]

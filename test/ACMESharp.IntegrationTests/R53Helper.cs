@@ -1,7 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+
 using Amazon;
 using Amazon.Route53;
 using Amazon.Route53.Model;
@@ -81,7 +82,7 @@ namespace ACMESharp.IntegrationTests
 
         public async Task EditARecord(string dnsName, string dnsValue, bool delete = false)
         {
-            var rrSet =new Amazon.Route53.Model.ResourceRecordSet
+            var rrSet = new Amazon.Route53.Model.ResourceRecordSet
             {
                 TTL = DefaultRecordTtl,
                 Name = dnsName,
@@ -115,7 +116,7 @@ namespace ACMESharp.IntegrationTests
                 bool delete = false)
         {
 #pragma warning disable 618 // "'StoredProfileCredentials' is obsolete..."
-          //var creds = new BasicAWSCredentials(AwsAccessKey, AwsSecretKey);
+            //var creds = new BasicAWSCredentials(AwsAccessKey, AwsSecretKey);
             var creds = new StoredProfileAWSCredentials("acmesharp-tests");
 #pragma warning restore 618
             var reg = RegionEndpoint.GetBySystemName(AwsRegion);

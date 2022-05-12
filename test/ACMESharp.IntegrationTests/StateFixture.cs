@@ -1,10 +1,13 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+
 using ACMESharp.Testing.Xunit;
+
 using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
 
 namespace ACMESharp.IntegrationTests
@@ -15,7 +18,9 @@ namespace ACMESharp.IntegrationTests
         {
             // Need a place to stash stuff
             if (!Directory.Exists("_TMP"))
+            {
                 Directory.CreateDirectory("_TMP");
+            }
 
             Factory = new LoggerFactory().AddFile("integration-tests.log");
         }
@@ -43,8 +48,10 @@ namespace ACMESharp.IntegrationTests
         {
             var fromName = $"_TMP/{saveName}";
             if (File.Exists(fromName))
+            {
                 return File.ReadAllText(fromName);
-            
+            }
+
             return null;
         }
 
@@ -52,9 +59,13 @@ namespace ACMESharp.IntegrationTests
         {
             var fromName = $"_TMP/{saveName}";
             if (File.Exists(fromName))
+            {
                 value = File.ReadAllBytes(fromName);
+            }
             else
+            {
                 value = null;
+            }
         }
 
         public void SaveObject(string saveName, object o)

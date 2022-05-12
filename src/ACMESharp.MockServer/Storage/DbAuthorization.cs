@@ -1,4 +1,4 @@
-using ACMESharp.Protocol.Resources;
+﻿using ACMESharp.Protocol.Resources;
 
 namespace ACMESharp.MockServer.Storage
 {

@@ -1,6 +1,8 @@
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
+
 using ACMESharp.Crypto.JOSE;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ACMESharp.UnitTests

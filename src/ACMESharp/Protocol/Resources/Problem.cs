@@ -1,20 +1,20 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+
 using Newtonsoft.Json;
 
-namespace ACMESharp.Protocol.Resources
+namespace ACMESharp.Protocol.Resources;
+
+public class Problem
 {
-    public class Problem
-    {
-        public const string StandardProblemTypeNamespace = "urn:ietf:params:acme:error:";
+    public const string StandardProblemTypeNamespace = "urn:ietf:params:acme:error:";
 
-        [JsonProperty("type", Required = Required.Always)]
-        [Required]
-        public string Type { get; set; }
+    [JsonProperty("type", Required = Required.Always)]
+    [Required]
+    public string Type { get; set; }
 
-        [JsonProperty("detail")]
-        public string Detail { get; set; }
+    [JsonProperty("detail")]
+    public string Detail { get; set; }
 
-        [JsonProperty("status")]
-        public int? Status { get; set; }
-    }
+    [JsonProperty("status")]
+    public int? Status { get; set; }
 }
