@@ -34,6 +34,9 @@ namespace ACMESharp.Protocol.Resources
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string KeyChange { get; set; } //! = "acme/key-change";
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string RenewalInfo { get; set; } //! = "acme/renewal-info";
+
         public DirectoryMeta Meta { get; set; }
 
         public IEnumerable<string> GetExtraNames() => _extra?.Keys;
