@@ -19,5 +19,8 @@ namespace ACMESharp.Protocol.Messages
 
         [JsonProperty("notAfter", NullValueHandling = NullValueHandling.Ignore)]
         public string NotAfter { get; set; }
+
+        [JsonProperty("replaces", NullValueHandling = NullValueHandling.Ignore)]
+        public string Replaces { get; set; }
     }
 }
